@@ -7,12 +7,10 @@ Created on Wed Jan 11 11:52:12 2017
 
 import Tkinter as tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
+import tkFileDialog
 import matplotlib.pyplot as plt
 import numpy as np
 from platform import system
-
-# Importer les donnees
-data = np.loadtxt("Tableau_donnees_TP01_H2017.csv", delimiter=",", skiprows=1)
 
 # Dérive
 def corr_derive(g, t):
@@ -35,16 +33,19 @@ class MainApplication:
     def __init__(self, master):
         self.master = master
         # Séparer les colonnes
-        self.position = data[:,0]
-        self.heure = data[:,1]
-        self.g = data[:,2]
-        self.altitude = data[:,3]
+        # Construire l'interface
         self.make_frames()
         self.make_buttons()
-        self.plot_topo()
-        self.plot_grav()
-        self.draw_canvas()
+        self.build_menu()
  
+    def get_data(self):
+        # Importer les donnees
+        self.data = np.loadtxt(self.open_files[0], delimiter=",", skiprows=1)
+        self.position = self.data[:,0]
+        self.heure = self.data[:,1]
+        self.g = self.data[:,2]
+        self.altitude = self.data[:,3]
+        
     def plot_topo(self):
         self.fig_topo = plt.figure()
         plt.plot(self.position[:-1], self.altitude[:-1], 'ko-')
@@ -64,11 +65,11 @@ class MainApplication:
         plt.close()
     
     def update_plot(self):
-        self.reponse.set_ydata(self.g)
-        self.fig_grav.canvas.draw()
+        self.reponse.set_ydata(self.g) # Remplace le data dans le graphique
+        self.fig_grav.canvas.draw() # Retrace le graphique
         
     def reset_plot(self):
-        self.g = data[:,2]
+        self.g = self.data[:,2]
         self.update_plot()
         self.but_reset.config(state=tk.DISABLED)
         self.but_derive.config(state=tk.ACTIVE)
@@ -112,31 +113,53 @@ class MainApplication:
         
     def make_buttons(self):
         self.but_derive = tk.Button(self.frame_bout, text="Dérive", command=self.app_derive)
-        self.but_derive.grid(row=0, column=0, sticky=tk.W+tk.E+tk.N, padx=10, pady=10)
+        self.but_derive.grid(row=1, column=0, sticky=tk.W+tk.E+tk.N, padx=10, pady=10)
         self.but_latitude = tk.Button(self.frame_bout, text="Latitude", command=self.app_latitude)
-        self.but_latitude.grid(row=1, column=0, sticky=tk.W+tk.E+tk.N, padx=10, pady=10)
+        self.but_latitude.grid(row=2, column=0, sticky=tk.W+tk.E+tk.N, padx=10, pady=10)
         self.but_plateau = tk.Button(self.frame_bout, text="Plateau", command=self.app_plateau)
-        self.but_plateau.grid(row=2, column=0, sticky=tk.W+tk.E+tk.N, padx=10, pady=10)
+        self.but_plateau.grid(row=3, column=0, sticky=tk.W+tk.E+tk.N, padx=10, pady=10)
         self.but_altitude = tk.Button(self.frame_bout, text="Altitude", command=self.app_altitude)
-        self.but_altitude.grid(row=3, column=0, sticky=tk.W+tk.E+tk.N, padx=10, pady=10)
+        self.but_altitude.grid(row=4, column=0, sticky=tk.W+tk.E+tk.N, padx=10, pady=10)
         self.but_reset = tk.Button(self.frame_bout, text="Reset", command=self.reset_plot)
-        self.but_reset.grid(row=4, column=0, sticky=tk.W+tk.E+tk.N, padx=10, pady=10)
-        self.but_reset.config(state=tk.DISABLED)
-        
+        self.but_reset.grid(row=5, column=0, sticky=tk.W+tk.E+tk.N, padx=10, pady=10)
+        self.but_reset.config(state=tk.DISABLED) # Bouton reset initialement désactivé
+
+    def build_menu(self):
+        menubar = tk.Menu(self.master)
+        filemenu = tk.Menu(menubar, tearoff=0)
+        filemenu.add_command(label="Open", command=self.get_file_list)
+        filemenu.add_separator()
+        filemenu.add_command(label="Exit", command=self.master.destroy)
+        menubar.add_cascade(label="File", menu=filemenu)
+        self.master.config(menu=menubar)
+
     def draw_canvas(self):
-        canvas1 = FigureCanvasTkAgg(self.fig_grav, master=self.frame_grav)
-        canvas1.get_tk_widget().grid(row=1, column=0, sticky=tk.N+tk.S+tk.E+tk.W)
-        canvas1.show()
+        # Trace la figure sur le canvas
+        canvas_grav = FigureCanvasTkAgg(self.fig_grav, master=self.frame_grav)
+        canvas_grav.get_tk_widget().grid(row=1, column=0, sticky=tk.N+tk.S+tk.E+tk.W)
+        canvas_grav.show()
+        # Ajoute une barre d'outils
         grav_toolbar_frame = tk.Frame(self.frame_grav)
         grav_toolbar_frame.grid(row=0,column=0,columnspan=2, sticky=tk.W)
-        NavigationToolbar2TkAgg(canvas1, grav_toolbar_frame)
-        canvas2 = FigureCanvasTkAgg(self.fig_topo, master=self.frame_topo)
-        canvas2.get_tk_widget().grid(row=1, column=0, sticky=tk.N+tk.S+tk.E+tk.W)
-        canvas2.show()
+        NavigationToolbar2TkAgg(canvas_grav, grav_toolbar_frame)
+        # Trace la figure sur le canvas
+        canvas_topo = FigureCanvasTkAgg(self.fig_topo, master=self.frame_topo)
+        canvas_topo.get_tk_widget().grid(row=1, column=0, sticky=tk.N+tk.S+tk.E+tk.W)
+        canvas_topo.show()
+        # Ajoute une barre d'outils
         topo_toolbar_frame = tk.Frame(self.frame_topo)
         topo_toolbar_frame.grid(row=0,column=0,columnspan=2, sticky=tk.W)
-        NavigationToolbar2TkAgg(canvas2, topo_toolbar_frame)
+        NavigationToolbar2TkAgg(canvas_topo, topo_toolbar_frame)
 
+    def get_file_list(self):
+        # Va chercher une liste de fichier à ouvrir
+        files = tkFileDialog.askopenfilenames(parent=self.master,title='Choose a file')
+        self.open_files = sorted(list(files))
+        self.get_data()
+        self.plot_topo()
+        self.plot_grav()
+        self.draw_canvas()
+        
 #==============================================================================
 # Main function
 #==============================================================================
