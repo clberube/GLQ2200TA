@@ -22,7 +22,7 @@ R_1 = 12.8*100
 PosX_1 = 75*100
 PosZ_1 = 19*100
 
-rho_2 = -2.67
+rho_2 = -1.67
 R_2 = 16.3*100
 PosX_2 = 200*100
 PosZ_2 = 23*100
@@ -51,7 +51,7 @@ for i in range(100000):
     # Générer des paramètres de façon aléatoire
     rho_mod_1 = np.random.uniform(-5,5)
     R_mod_2 = np.random.uniform(10,20)*100
-    PosZ_mod_3 = np.random.uniform(15,25)*100
+    PosZ_mod_3 = np.random.uniform(0,30)*100
     # Calculer le modèle proposé
     g_model = grav_sphere(axeX, rho_mod_1, R_1, PosX_1, PosZ_1) + grav_sphere(axeX, rho_2, R_mod_2, PosX_2, PosZ_2) + grav_cylindre(axeX, rho_3, R_3, PosX_3, PosZ_mod_3)
     # La fonction objectif (Root Mean Square Error)
