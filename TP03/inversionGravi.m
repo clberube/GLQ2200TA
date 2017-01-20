@@ -5,23 +5,26 @@ axeX = data(:,1);
 g = data(:,2);
 figure();
 plot(axeX/100, 1000*g, 'k.');
+xlabel('X (m)')
+ylabel('g (mGal)')
+title('Donnees gravi 3 corps')
 
 % On sait que:
     % Roche encaissante:
             % Densite 2.67 g/cm3
     % Corps 1:
-            % Densite INCONNUE
+            % Densite INCONNUE (3.78 g/cm3)
             % Rayon 12.8 m
             % Profondeur 19.0 m
     % Corps 2:
             % Densite 1.00 g/cm3
-            % Rayon INCONNU
+            % Rayon INCONNU (16.3 m)
             % Profondeur 23.0 m
     % Corps 3:
             % Densite 0.00 g/cm3
             % Rayon 10 m
-            % Profondeur INCONNUE
-
+            % Profondeur INCONNUE (21.5 m)
+            
 % Générer des listes vides pour entreposer les paramètres 
 % qui seront acceptés 
 rho_corps1 = zeros();
@@ -58,11 +61,15 @@ figure();
 hold on;
 plot(axeX/100, 1000*g, 'k.');
 plot(axeX/100, 1000*best_g, 'r-', 'Linewidth',2);
+xlabel('X (m)')
+ylabel('g (mGal)')
+title('Resultat de l''inversion 3 corps')
 hold off;
-xlabel('Position');
-ylabel('mGal');
 figure();
 plot(RMS_list);
+xlabel('# Iterations acceptees')
+ylabel('RMS')
+title('Evolution de la fonction objectif')
 sprintf('Densité du corps 1: %.3f g/cc', rho_corps1(end)) 
 sprintf('Rayon du corps 2: %.3f m', R_corps2(end)/100)
 sprintf('Profondeur du corps 3: %.3f m', z_corps3(end)/100)

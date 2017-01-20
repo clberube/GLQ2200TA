@@ -3,6 +3,11 @@ data = csvread('Donnees_gravite_TP03.csv');
 % Séparer les colonnes
 axeX = data(:,1);
 g = data(:,2);
+figure();
+plot(axeX/100, 1000*g, 'k.');
+xlabel('X (m)')
+ylabel('g (mGal)')
+title('Donnees gravi 3 corps')
 
 % On sait que:
     % Roche encaissante:
@@ -27,6 +32,7 @@ R_corps2 = zeros();
 z_corps3 = zeros();
 RMS_list = zeros();
 
+% Inversion Monte Carlo
 % Tester N hypothèses et calculer la fonction objectif
 c = 0; % Compteur à 0
 for i = 1:10000
@@ -39,7 +45,7 @@ for i = 1:10000
     % La fonction objectif (Root Mean Square Error)
     RMS = sqrt(mean((g_model - g).^2));
     % Entreposer les paramètres si c'est la première itération ou si la 
-    % nouvelle hypothèse est plus probable que la précédente
+    % nouvelle hypothèse est meilleure que la précédente
     if (i == 1) || (RMS < RMS_list(end))
         c = c+1; % Faire monter le compteur 
         RMS_list(c) = RMS;
@@ -53,13 +59,19 @@ end
 best_g = grav_sphere(axeX, rho_corps1(end), 12.8*100, 75*100, 19*100) + grav_sphere(axeX, -1.67, R_corps2(end), 200*100, 23*100) + grav_cylindre(axeX, -2.67, 10.0*100, 350*100, z_corps3(end));
 figure();
 hold on;
-plot(axeX/100, 1000*g, 'bo');
-plot(axeX/100, 1000*best_g, 'r-');
+plot(axeX/100, 1000*g, 'k.');
+plot(axeX/100, 1000*best_g, 'r-', 'Linewidth',2);
+xlabel('X (m)')
+ylabel('g (mGal)')
+title('Resultat de l''inversion 3 corps')
 hold off;
 xlabel('Position');
 ylabel('mGal');
 figure();
 plot(RMS_list);
+xlabel('# iteration acceptees')
+ylabel('g (mGal)')
+title('Resultat de l''inversion 3 corps')
 sprintf('Densité du corps 1: %.3f g/cc', rho_corps1(end)) 
 sprintf('Rayon du corps 2: %.3f m', R_corps2(end)/100)
 sprintf('Profondeur du corps 3: %.3f m', z_corps3(end)/100)
