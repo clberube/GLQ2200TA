@@ -47,7 +47,7 @@ class MainApplication:
         self.altitude = self.data[:,3]
         
     def plot_topo(self):
-        self.fig_topo = plt.figure()
+        self.fig_topo = plt.figure(figsize=(6,3))
         plt.plot(self.position[:-1], self.altitude[:-1], 'ko-')
         plt.xlim([0, 800])
         plt.xlabel("Position (m)")
@@ -55,7 +55,7 @@ class MainApplication:
         plt.close()
         
     def plot_grav(self):
-        self.fig_grav, self.ax_grav = plt.subplots()
+        self.fig_grav, self.ax_grav = plt.subplots(figsize=(6,3))
         self.ax_grav.scatter(self.position, self.g, alpha=0.5, s=25, facecolors='none', edgecolors='k')
         self.ax_grav.set_ylim([-1, 6])
         self.ax_grav.set_xlim([0, 800])
@@ -109,7 +109,7 @@ class MainApplication:
         self.frame_grav = tk.LabelFrame(self.master, text="Réponse gravimétrique", font=("TkDefaultFont", 12, "bold"))
         self.frame_grav.grid(row=0, column=1, sticky=tk.W+tk.E+tk.N, padx=10, pady=10)
         self.frame_topo = tk.LabelFrame(self.master, text="Stations et topographie", font=("TkDefaultFont", 12, "bold"))
-        self.frame_topo.grid(row=0, column=2, sticky=tk.W+tk.E+tk.N, padx=10, pady=10)
+        self.frame_topo.grid(row=1, column=1, sticky=tk.W+tk.E+tk.N, padx=10, pady=10)
         
     def make_buttons(self):
         self.but_derive = tk.Button(self.frame_bout, text="Dérive", command=self.app_derive)
@@ -139,17 +139,17 @@ class MainApplication:
         canvas_grav.get_tk_widget().grid(row=1, column=0, sticky=tk.N+tk.S+tk.E+tk.W)
         canvas_grav.show()
         # Ajoute une barre d'outils
-        grav_toolbar_frame = tk.Frame(self.frame_grav)
-        grav_toolbar_frame.grid(row=0,column=0,columnspan=2, sticky=tk.W)
-        NavigationToolbar2TkAgg(canvas_grav, grav_toolbar_frame)
+#        grav_toolbar_frame = tk.Frame(self.frame_grav)
+#        grav_toolbar_frame.grid(row=0,column=0,columnspan=2, sticky=tk.W)
+#        NavigationToolbar2TkAgg(canvas_grav, grav_toolbar_frame)
         # Trace la figure sur le canvas
         canvas_topo = FigureCanvasTkAgg(self.fig_topo, master=self.frame_topo)
         canvas_topo.get_tk_widget().grid(row=1, column=0, sticky=tk.N+tk.S+tk.E+tk.W)
         canvas_topo.show()
         # Ajoute une barre d'outils
-        topo_toolbar_frame = tk.Frame(self.frame_topo)
-        topo_toolbar_frame.grid(row=0,column=0,columnspan=2, sticky=tk.W)
-        NavigationToolbar2TkAgg(canvas_topo, topo_toolbar_frame)
+#        topo_toolbar_frame = tk.Frame(self.frame_topo)
+#        topo_toolbar_frame.grid(row=0,column=0,columnspan=2, sticky=tk.W)
+#        NavigationToolbar2TkAgg(canvas_topo, topo_toolbar_frame)
 
     def get_file_list(self):
         # Va chercher une liste de fichier à ouvrir
