@@ -183,6 +183,7 @@ class MainApplication(object):
 
     def update_grav_plot(self):
         self.ax_grav.clear()
+        self.cax_grav.clear()
         self.plot_grav()
         self.fig_grav.canvas.draw() # Retrace le graphique
         
