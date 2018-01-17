@@ -4,8 +4,13 @@ Created on Wed Nov 18 20:44:22 2015
 
 @author: Charles
 """
+from __future__ import division
 
-import Tkinter as tk
+from future import standard_library
+standard_library.install_aliases()
+from builtins import range
+from past.utils import old_div
+import tkinter as tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 import matplotlib.pyplot as plt
 import numpy as np
@@ -49,7 +54,7 @@ def make_data(n_sphe):
     for n in range(n_sphe):
         r = np.sqrt((x-shift[n])**2 + depth[n]**2)
         noise = np.random.rand(len(x))
-        g += 0.1*(0.5-noise) + 1e5*depth[n] * G * density[n]*((4/3)*np.pi*radius[n]**3) / ((x-shift[n])**2 + depth[n]**2) **(3/2)
+        g += 0.1*(0.5-noise) + 1e5*depth[n] * G * density[n]*((old_div(4,3))*np.pi*radius[n]**3) / ((x-shift[n])**2 + depth[n]**2) **(old_div(3,2))
     return g
 
 def number_spheres(n_ini):
@@ -102,7 +107,7 @@ def compute_model(n):
     density = grav_vars[n][2][1].get()
     radius = grav_vars[n][3][1].get()
     r = np.sqrt((x-shift)**2 + depth**2)
-    response = 1e5*depth * G * density*((4/3)*np.pi*radius**3) / ((x-shift)**2 + depth**2)**(3/2)
+    response = 1e5*depth * G * density*((old_div(4,3))*np.pi*radius**3) / ((x-shift)**2 + depth**2)**(old_div(3,2))
     return depth, density, radius, shift, response
 
 def update_plot0(e):
@@ -110,7 +115,7 @@ def update_plot0(e):
     curve[0].set_ydata(response)
     sphere[0].set_ydata(xy(radius,phis,shift,-depth)[1])
     sphere[0].set_xdata(xy(radius,phis,shift,-depth)[0])
-    sphere[0].set_alpha((density)/grav_vars[0][2][3])
+    sphere[0].set_alpha(old_div((density),grav_vars[0][2][3]))
     total = compute_sum()
     tot_curve.set_ydata(total)
     fig.get_axes()[0].set_ylim([0, 1.3*max(total)])
@@ -121,7 +126,7 @@ def update_plot1(e):
     curve[1].set_ydata(response)
     sphere[1].set_ydata(xy(radius,phis,shift,-depth)[1])
     sphere[1].set_xdata(xy(radius,phis,shift,-depth)[0])
-    sphere[1].set_alpha(density/grav_vars[1][2][3])
+    sphere[1].set_alpha(old_div(density,grav_vars[1][2][3]))
     total = compute_sum()
     tot_curve.set_ydata(total)
     fig.get_axes()[0].set_ylim([0, 1.3*max(total)])
@@ -132,7 +137,7 @@ def update_plot2(e):
     curve[2].set_ydata(response)
     sphere[2].set_ydata(xy(radius,phis,shift,-depth)[1])
     sphere[2].set_xdata(xy(radius,phis,shift,-depth)[0])
-    sphere[2].set_alpha((density)/grav_vars[2][2][3])
+    sphere[2].set_alpha(old_div((density),grav_vars[2][2][3]))
     total = compute_sum()
     tot_curve.set_ydata(total)
     fig.get_axes()[0].set_ylim([0, 1.3*max(total)])
@@ -151,7 +156,7 @@ def plot_model(n_sphe):
     global curve, sphere, fig, n, tot_curve
     depth, density, radius, shift, response, sphere, curve = {}, {}, {}, {}, {}, {}, {}
     fig, ax = plt.subplots(2,1,figsize=(6,8))
-    ax[0].errorbar(x, make_data(n_sphe),(n_sphe/2)*0.1*np.random.rand(len(x)),None, color='k',ms=5 ,fmt='o', mfc='white', zorder=1, label="Observations")
+    ax[0].errorbar(x, make_data(n_sphe),(old_div(n_sphe,2))*0.1*np.random.rand(len(x)),None, color='k',ms=5 ,fmt='o', mfc='white', zorder=1, label="Observations")
     for n in range(n_sphe):
         depth[n], density[n], radius[n], shift[n], response[n] = compute_model(n)
         curve[n], = ax[0].plot(x, compute_model(n)[4], c=colors[n],ls='-',lw=2, label="Sphere %i"%(n+1))
