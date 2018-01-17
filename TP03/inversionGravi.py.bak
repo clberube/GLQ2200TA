@@ -4,26 +4,20 @@ Created on Tue Jan 17 20:03:36 2017
 
 @author: Charles
 """
-from __future__ import division
 
-from future import standard_library
-standard_library.install_aliases()
-from builtins import range
-from builtins import object
-from past.utils import old_div
-import tkinter as tk
+import Tkinter as tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
-import tkinter.filedialog
+import tkFileDialog
 import matplotlib.pyplot as plt
 import numpy as np
 from platform import system
 import time
 
 def grav_cylindre(x, rho, r, p_x, p_z, G=6.674e-8):
-    return old_div((old_div((2 * np.pi * G * rho * r**2), p_z) ), (1 + ((old_div((p_x - x),p_z))**2)))
+    return ((2 * np.pi * G * rho * r**2) / p_z ) / (1 + (((p_x - x)/p_z)**2))
 
 def grav_sphere(x, rho, r, p_x, p_z, G=6.674e-8):
-    return (old_div(4.,3))*np.pi*G*rho*p_z*r**3 / ( ((p_x - x)**2 + p_z**2)**(old_div(3.,2)) )
+    return (4./3)*np.pi*G*rho*p_z*r**3 / ( ((p_x - x)**2 + p_z**2)**(3./2) )
 
 
 # Paramètres intiaux pour calculer la réponse des corps simples
@@ -65,7 +59,7 @@ g_data = g_1 + g_2 + g_3 + g_4 + g_5
 g_data += np.random.normal(0,0.02*max(abs(g_data)),size=len(g_data)) 
 np.savetxt("Donnees_gravite_TP03_demo.csv", np.vstack((axeX, g_data)).T, delimiter=',', header='Position (m), Gravite (mGal)')
 
-class MainApplication(object):
+class MainApplication:
     def __init__(self, master):
         self.master = master
         # Séparer les colonnes
@@ -111,7 +105,7 @@ class MainApplication(object):
 
     def plot_rms_progress(self):
         self.rms_line.set_ydata(self.rms_list)
-        self.rms_line.set_xdata(list(range(len(self.rms_list))))
+        self.rms_line.set_xdata(range(len(self.rms_list)))
         self.ax_rms.set_xlim([0, len(self.rms_list)])
         self.ax_rms.set_ylim([0, max(self.rms_list)])
         self.ax_rms.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
@@ -121,7 +115,7 @@ class MainApplication(object):
         self.but_reset.config(state=tk.DISABLED)
         # Tester N hypothèses et calculer la fonction objectif 
         for i in range(self.iterations.get()):
-            if i % (old_div(self.iterations.get(),100)) == 0:
+            if i % (self.iterations.get()/100) == 0:
                 self.it_left.set(self.iterations.get() - i)
                 self.fig_rms.canvas.draw()
             # Générer des paramètres de façon aléatoire
@@ -165,8 +159,8 @@ class MainApplication(object):
         
     def plot_data(self):
         self.fig_data, ax_data = plt.subplots(figsize=(6,3))
-        ax_data.plot(old_div(axeX,100), 1000*self.g, 'k.')
-        self.reponse, = ax_data.plot(old_div(axeX,100), np.zeros(len(self.axeX)), 'r-')
+        ax_data.plot(axeX/100, 1000*self.g, 'k.')
+        self.reponse, = ax_data.plot(axeX/100, np.zeros(len(self.axeX)), 'r-')
         ax_data.set_ylim([-1, 1])
 #        ax_data.set_xlim([0, 800])
         plt.xlabel("Position (m)")
@@ -228,7 +222,7 @@ class MainApplication(object):
 
     def get_file_list(self):
         # Va chercher une liste de fichier à ouvrir
-        files = tkinter.filedialog.askopenfilenames(parent=self.master,title='Choose a file')
+        files = tkFileDialog.askopenfilenames(parent=self.master,title='Choose a file')
         self.open_files = sorted(list(files))
         self.get_data()
         self.plot_data()

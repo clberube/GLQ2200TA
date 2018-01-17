@@ -6,18 +6,15 @@ Created on Tue Feb 07 21:38:55 2017
 """
 
 from __future__ import division
-from future import standard_library
-standard_library.install_aliases()
-from builtins import object
-import tkinter as tk
+import Tkinter as tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
-import tkinter.filedialog
+import tkFileDialog
 import matplotlib.pyplot as plt
 import numpy as np
 from platform import system
 import time
 
-class MainApplication(object):
+class MainApplication:
     def __init__(self, master):
         self.master = master
         # Séparer les colonnes

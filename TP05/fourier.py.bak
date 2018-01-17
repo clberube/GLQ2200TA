@@ -4,16 +4,14 @@ Created on Mon Feb 22 12:04:32 2016
 
 @author: Charles
 """
-from __future__ import division
 
-from past.utils import old_div
 import numpy as np
 
 import matplotlib.pyplot as plt
 
 
 def gaussian(x, mu, sig):
-    return np.exp(old_div(-np.power(x - mu, 2.), (2 * np.power(sig, 2.))))
+    return np.exp(-np.power(x - mu, 2.) / (2 * np.power(sig, 2.)))
 
 t = np.arange(256)
 
@@ -34,7 +32,7 @@ sp = 1*np.fft.fft(func)
 #    sp[k] = np.sum(exp)
 
 #freq = np.fft.fftfreq(t.shape[-1])
-freq = np.hstack((np.linspace(0,0.5,old_div(len(t),2)),np.linspace(-0.5,0,old_div(len(t),2))))
+freq = np.hstack((np.linspace(0,0.5,len(t)/2),np.linspace(-0.5,0,len(t)/2)))
 #freq = 1.*np.arange(0, len(t))/len(t)
 
 #freq = np.linspace(0,len(t),len(t))/len(t)
