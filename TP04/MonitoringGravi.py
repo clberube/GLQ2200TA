@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+ne# -*- coding: utf-8 -*-
 """
 Created on Tue Feb 07 21:38:55 2017
 
@@ -22,7 +22,7 @@ class MainApplication(object):
         self.master = master
         # Séparer les colonnes
         # Construire l'interface
-        self.duration = 1000
+        self.duration = 100
         self.time = np.arange(0, self.duration)
         self.make_frames()
         self.make_buttons()
@@ -38,14 +38,15 @@ class MainApplication(object):
         self.ax_data.set_ylim([-0.5, 0.1])
         self.ax_data.set_xlim([-self.duration/2, self.duration/2])
         plt.xlabel("Temps (minutes)")
-        plt.ylabel("Gravite (mGal)")
+        plt.ylabel("Accélération gravi. (mGal)")
+        plt.tight_layout()
         plt.close()
         
     def plot_model(self):
         self.fig_mod, self.ax_mod = plt.subplots(figsize=(6,3))
         self.ax_mod.plot([0,250], [20,20], 'k-')
         self.ax_mod.plot([250,250], [0,20], 'k-')
-        self.ax_mod.plot([250,800], [15,15], 'k:')
+#        self.ax_mod.plot([250,800], [15,15], 'k:')
 #        self.model, = self.ax_mod.plot([250,800], [10,10], 'k-')
         arrow_props = dict(arrowstyle="->", fc='k', ec='k', 
                        )
@@ -53,12 +54,15 @@ class MainApplication(object):
                              arrowprops=arrow_props)
         self.ax_mod.plot([225,225], [22,20], 'k-')
         self.ax_mod.plot(225, 22, 'ro', markersize=10)
-        self.ax_mod.fill_between([250,800], 0, 10)
+        self.ax_mod.fill_between([250,800], 0, 10, color='C0')
+        self.ax_mod.fill_between([250,800], 0, 19, facecolor="none", hatch="oo", edgecolor="C7", linewidth=0.0)
         self.ax_mod.plot(0, 0, 'r-')
         self.ax_mod.set_ylim([0, 30])
         self.ax_mod.set_xlim([0, 800])
-        plt.xlabel("X (m)")
-        plt.ylabel("Y (m)")
+        plt.xlabel("Distance (m)")
+        plt.ylabel("Altitude (m)")
+        plt.grid('off')
+        plt.tight_layout()
         plt.close()
         
     def plaque_mince(self, e, z, x):
@@ -80,8 +84,9 @@ class MainApplication(object):
             g_list.append(self.plaque_mince(epaisseur, z, 25))
             for coll in (self.ax_mod.collections):
                 self.ax_mod.collections.remove(coll)
-            self.ax_mod.fill_between([250,800], 0, h)
-            self.ax_mod.fill_between([250,800], h, 15, color="none", hatch="+", edgecolor="b", linewidth=0.0)
+            self.ax_mod.fill_between([250,800], 0, h, color='C0',zorder=0)
+            self.ax_mod.fill_between([250,800], 0, h, facecolor="none", hatch="oo", edgecolor="k", linewidth=0.0)
+            self.ax_mod.fill_between([250,800], h, 19, facecolor="none", hatch="oo", edgecolor="C7", linewidth=0.0)
             self.fig_mod.canvas.draw()
             self.reponse_line.set_ydata(g_list[:t])
             self.reponse_line.set_xdata(self.time[:t])
@@ -119,6 +124,10 @@ class MainApplication(object):
         self.master.config(menu=menubar)
 
     def draw_canvas(self):
+
+        canvas_mod = FigureCanvasTkAgg(self.fig_mod, master=self.frame_rms)
+        canvas_mod.get_tk_widget().grid(row=1, column=0, sticky=tk.N+tk.S+tk.E+tk.W)
+        canvas_mod.show()
         # Trace la figure sur le canvas
         canvas_data = FigureCanvasTkAgg(self.fig_data, master=self.frame_data)
         canvas_data.get_tk_widget().grid(row=1, column=0, sticky=tk.N+tk.S+tk.E+tk.W)
@@ -128,9 +137,7 @@ class MainApplication(object):
 #        grav_toolbar_frame.grid(row=0,column=0,columnspan=2, sticky=tk.W)
 #        NavigationToolbar2TkAgg(canvas_grav, grav_toolbar_frame)
         # Trace la figure sur le canvas
-        canvas_mod = FigureCanvasTkAgg(self.fig_mod, master=self.frame_rms)
-        canvas_mod.get_tk_widget().grid(row=1, column=0, sticky=tk.N+tk.S+tk.E+tk.W)
-        canvas_mod.show()
+
         # Ajoute une barre d'outils
 #        topo_toolbar_frame = tk.Frame(self.frame_topo)
 #        topo_toolbar_frame.grid(row=0,column=0,columnspan=2, sticky=tk.W)

@@ -161,6 +161,7 @@ class MainApplication(object):
         self.rms_line, = self.ax_rms.plot(self.rms_list, 'bo-')
         plt.xlabel("# Iteration")
         plt.ylabel("RMS (mGal)")
+        plt.tight_layout()
         plt.close()
         
     def plot_data(self):
@@ -171,6 +172,7 @@ class MainApplication(object):
 #        ax_data.set_xlim([0, 800])
         plt.xlabel("Position (m)")
         plt.ylabel("Gravite (mGal)")
+        plt.tight_layout()
         plt.close()
         
     def make_frames(self):

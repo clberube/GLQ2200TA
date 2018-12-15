@@ -169,6 +169,7 @@ def plot_model(n_sphe):
             labelbottom='off') # labels along the bottom edge are off
 #        ax[0].set_ylim([0,None])
         ax[0].set_ylabel("Gravity (mGal)")
+        ax[0].grid('off')
         ax[1].plot(x, np.zeros(len(x)), c='gray',ls='-',lw=5)
         ax[1].set_aspect('equal', adjustable='box')
         ax[1].set_ylim([-100, 1])
